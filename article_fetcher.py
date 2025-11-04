@@ -61,11 +61,24 @@ def fetch_reddit_article(url: str) -> Dict[str, any]:
 
     try:
         # Add .json suffix to Reddit URL
-        json_url = url.rstrip('/') + '/.json'
+        json_url = url.rstrip('/') + '.json'
+
+        headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept': 'application/json',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Cache-Control': 'max-age=0',
+        }
 
         # Fetch with httpx
         with httpx.Client(timeout=30.0) as client:
-            response = client.get(json_url, headers={'User-Agent': 'ClaudeCodeBestPracticesGetter'})
+            response = client.get(json_url, follow_redirects=True, headers=headers)
             response.raise_for_status()
             data = response.json()
 
