@@ -3,6 +3,7 @@
 # dependencies = [
 #   "newspaper4k",
 #   "lxml_html_clean",
+#   "httpx",
 # ]
 # ///
 """
@@ -14,11 +15,12 @@ Prompt:
 write a python script that fetches article content from the @sources.csv file and complies to the following:
 
 1) Use PEP-723 script header
-2) Use newspaper4k library
-3) Check for which articles have already been retreived.
-4) Fetch only the items that are not already retreived.
-5) Save the fetched content into markdown files in a folder named "source_content"
-6) Save fetch results into a csv in that folder that details if content was retreived from each link successfully and what the length in words and characters were of the retreeived content
+2) Use newspaper4k library except for reddit links
+3) For reddit links, use httpx to get the url suffixed with /.json. In the retreived content, the title and selftext fields should be retreived in the response.data[0].data.children[0].data object.
+4) Check for which articles have already been retreived.
+5) Fetch only the items that are not already retreived.
+6) Save the fetched content into markdown files in a folder named "source_content"
+7) Save fetch results into a csv in that folder that details if content was retreived from each link successfully and what the length in words and characters were of the retreeived content
 
 """
 
@@ -28,6 +30,7 @@ import re
 from pathlib import Path
 from newspaper import Article
 from typing import List, Dict
+import httpx
 
 
 def sanitize_filename(title: str) -> str:
@@ -41,12 +44,56 @@ def sanitize_filename(title: str) -> str:
     return safe_title
 
 
-def fetch_article(url: str) -> Dict[str, any]:
+def fetch_reddit_article(url: str) -> Dict[str, any]:
     """
-    Fetch article content from URL using newspaper4k.
+    Fetch article content from Reddit using JSON API.
 
     Returns dict with success status, content, and metadata.
     """
+    result = {
+        'success': False,
+        'title': '',
+        'text': '',
+        'authors': [],
+        'publish_date': None,
+        'error': None
+    }
+
+    try:
+        # Add .json suffix to Reddit URL
+        json_url = url.rstrip('/') + '/.json'
+
+        # Fetch with httpx
+        with httpx.Client(timeout=30.0) as client:
+            response = client.get(json_url, headers={'User-Agent': 'ClaudeCodeBestPracticesGetter'})
+            response.raise_for_status()
+            data = response.json()
+
+        # Navigate to the post data
+        post_data = data[0]['data']['children'][0]['data']
+
+        result['success'] = True
+        result['title'] = post_data.get('title', '')
+        result['text'] = post_data.get('selftext', '')
+        result['authors'] = [post_data.get('author', 'unknown')]
+        result['publish_date'] = None  # Could extract from 'created_utc' if needed
+
+    except Exception as e:
+        result['error'] = str(e)
+
+    return result
+
+
+def fetch_article(url: str) -> Dict[str, any]:
+    """
+    Fetch article content from URL using newspaper4k (or httpx for Reddit).
+
+    Returns dict with success status, content, and metadata.
+    """
+    # Check if this is a Reddit link
+    if 'reddit.com' in url:
+        return fetch_reddit_article(url)
+
     result = {
         'success': False,
         'title': '',
