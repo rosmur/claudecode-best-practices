@@ -15,8 +15,10 @@ write a python script that fetches article content from the @sources.csv file an
 
 1) Use PEP-723 script header
 2) Use newspaper4k library
-3) Save the fetched content into markdown files in a folder named "source_content"
-4) Save fetch results into a csv in that folder that details if content was retreived from each link successfully and what the length in words and characters were of the retreeived content
+3) Check for which articles have already been retreived.
+4) Fetch only the items that are not already retreived.
+5) Save the fetched content into markdown files in a folder named "source_content"
+6) Save fetch results into a csv in that folder that details if content was retreived from each link successfully and what the length in words and characters were of the retreeived content
 
 """
 
@@ -100,18 +102,59 @@ def save_to_markdown(title: str, content: str, url: str, output_dir: Path,
     return filename
 
 
+def get_already_fetched_urls(results_csv: Path) -> set:
+    """
+    Read the results CSV and return a set of URLs that were successfully fetched.
+    """
+    already_fetched = set()
+
+    if not results_csv.exists():
+        return already_fetched
+
+    try:
+        with open(results_csv, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                # Only consider successfully fetched articles
+                if row.get('success', '').lower() == 'true':
+                    already_fetched.add(row['url'])
+    except Exception as e:
+        print(f"Warning: Could not read existing results CSV: {e}")
+
+    return already_fetched
+
+
 def main():
     """Main execution function."""
     # Setup paths
     script_dir = Path(__file__).parent
     sources_csv = script_dir / "sources.csv"
     output_dir = script_dir / "source_content"
+    results_csv = output_dir / "fetch_results.csv"
 
     # Create output directory
     output_dir.mkdir(exist_ok=True)
 
+    # Check for already fetched articles
+    already_fetched = get_already_fetched_urls(results_csv)
+    if already_fetched:
+        print(f"Found {len(already_fetched)} already fetched articles. They will be skipped.\n")
+
     # Prepare results storage
     results = []
+
+    # Load existing results if they exist
+    if results_csv.exists():
+        try:
+            with open(results_csv, 'r', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                results = list(reader)
+                # Convert string 'True'/'False' to boolean for consistency
+                for r in results:
+                    r['success'] = r['success'].lower() == 'true'
+        except Exception as e:
+            print(f"Warning: Could not load existing results: {e}")
+            results = []
 
     # Read sources CSV
     print("Reading sources.csv...")
@@ -119,14 +162,19 @@ def main():
         reader = csv.DictReader(f)
         sources = list(reader)
 
-    print(f"Found {len(sources)} articles to fetch.\n")
+    # Filter out already fetched sources
+    sources_to_fetch = [s for s in sources if s['source'] not in already_fetched]
 
-    # Fetch each article
-    for idx, row in enumerate(sources, 1):
+    print(f"Found {len(sources)} total articles.")
+    print(f"Already fetched: {len(already_fetched)}")
+    print(f"To fetch: {len(sources_to_fetch)}\n")
+
+    # Fetch each article (only the ones not already fetched)
+    for idx, row in enumerate(sources_to_fetch, 1):
         title = row['title']
         url = row['source']
 
-        print(f"[{idx}/{len(sources)}] Fetching: {title}")
+        print(f"[{idx}/{len(sources_to_fetch)}] Fetching: {title}")
         print(f"  URL: {url}")
 
         # Fetch article
@@ -186,7 +234,6 @@ def main():
             print(f"  ✗ Failed: {article_data['error']}\n")
 
     # Save results to CSV
-    results_csv = output_dir / "fetch_results.csv"
     print(f"Saving results to {results_csv}...")
 
     with open(results_csv, 'w', encoding='utf-8', newline='') as f:
@@ -196,12 +243,19 @@ def main():
         writer.writerows(results)
 
     # Print summary
-    successful = sum(1 for r in results if r['success'])
+    newly_fetched = len([r for r in results if r['url'] not in already_fetched])
+    total_successful = sum(1 for r in results if r['success'])
+    total_failed = sum(1 for r in results if not r['success'])
+
     print(f"\n{'='*60}")
     print(f"Summary:")
-    print(f"  Total articles: {len(results)}")
-    print(f"  Successfully fetched: {successful}")
-    print(f"  Failed: {len(results) - successful}")
+    print(f"  Total articles in sources.csv: {len(sources)}")
+    print(f"  Already fetched (skipped): {len(already_fetched)}")
+    print(f"  Newly attempted: {len(sources_to_fetch)}")
+    print(f"  Newly fetched successfully: {sum(1 for r in results if r['success'] and r['url'] not in already_fetched)}")
+    print(f"  Total in results CSV: {len(results)}")
+    print(f"    - Successful: {total_successful}")
+    print(f"    - Failed: {total_failed}")
     print(f"  Results saved to: {results_csv}")
     print(f"{'='*60}")
 
