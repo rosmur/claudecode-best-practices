@@ -1,6 +1,10 @@
-# Claude Code Best Practices: Comprehensive Analysis <!-- omit from toc -->
+---
+title: Claude Code Best Practices
+layout: home
+toc: true
+---
 
-**This guide was written by Claude Code synthesizing the information contained in the sources listed below and following this [analysis prompt](claudecode-best-practices/analysis-prompt.md).**
+**This guide was written by Claude Code synthesizing the information contained in the sources listed below and following this [analysis prompt](../analysis-prompt.md).**
 
 - [1. Executive Summary](#1-executive-summary)
 - [2. Sources](#2-sources)

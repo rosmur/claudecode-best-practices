@@ -1,0 +1,10 @@
+remote_theme: sighingnow/jekyll-gitbook
+
+title: Claude Code Best Practices
+description: Comprehensive analysis and guide for effective Claude Code usage
+
+# Enable in-page TOC
+toc:
+    enabled: true
+    h_min: 2
+    h_max: 3
