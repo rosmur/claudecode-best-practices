@@ -1,45 +1,46 @@
 # Claude Code Best Practices: Comprehensive Analysis <!-- omit from toc -->
 
-**This guide was written by Claude Code synthesizing the information contained in the sources listed below.**
-
-*Total word count: 4,987 words*<br />
-*Sources analyzed: 12 documents*
+**This guide was written by Claude Code synthesizing the information contained in the sources listed below and following this [analysis prompt](claudecode-best-practices/analysis-prompt.md).**
 
 - [1. Executive Summary](#1-executive-summary)
-- [2. General Best Practices](#2-general-best-practices)
-  - [2.1. Why These Matter More with agentic AI coding](#21-why-these-matter-more-with-agentic-ai-coding)
-  - [2.2. Core General Practices](#22-core-general-practices)
-- [3. Core Recommendations by Category](#3-core-recommendations-by-category)
-  - [3.1. Category 1: Context Management (Most Critical)](#31-category-1-context-management-most-critical)
-  - [3.2. Category 2: Planning \& Architecture](#32-category-2-planning--architecture)
-  - [3.3. Category 3: Tool Usage \& Automation](#33-category-3-tool-usage--automation)
-  - [3.4. Category 4: Workflow Optimization](#34-category-4-workflow-optimization)
-  - [3.5. Category 5: Production Code Quality](#35-category-5-production-code-quality)
-  - [3.6. Category 6: Advanced Patterns](#36-category-6-advanced-patterns)
-  - [Testing Authenticated Routes](#testing-authenticated-routes)
-  - [Category 7: Architecture \& Design](#category-7-architecture--design)
-- [4. Contradictions \& Trade-offs](#4-contradictions--trade-offs)
-  - [4.1. Contradiction 1: Skills vs Context Bloat](#41-contradiction-1-skills-vs-context-bloat)
-  - [4.2. Contradiction 2: Custom Subagents vs Clone Pattern](#42-contradiction-2-custom-subagents-vs-clone-pattern)
-  - [4.3. Contradiction 3: Auto-Formatting Hooks](#43-contradiction-3-auto-formatting-hooks)
-  - [4.4. Contradiction 4: Planning Mode vs Manual Plans](#44-contradiction-4-planning-mode-vs-manual-plans)
-  - [4.5. Contradiction 5: Documentation Volume](#45-contradiction-5-documentation-volume)
-- [5. Appendix A: Source Mapping Table](#5-appendix-a-source-mapping-table)
-- [6. Appendix B: Complete Recommendation Set](#6-appendix-b-complete-recommendation-set)
-  - [6.1. Essential Practices (Do These First)](#61-essential-practices-do-these-first)
-  - [6.2. High-Impact Practices (Implement Soon)](#62-high-impact-practices-implement-soon)
-  - [6.3. Advanced Practices (For Experienced Users)](#63-advanced-practices-for-experienced-users)
-  - [6.4. Practices to Avoid](#64-practices-to-avoid)
-- [7. Appendix C: Quick Start Workflow](#7-appendix-c-quick-start-workflow)
-  - [7.1. Week 1: Foundations](#71-week-1-foundations)
-  - [7.2. Week 2: Quality Systems](#72-week-2-quality-systems)
-  - [7.3. Week 3: Advanced Context](#73-week-3-advanced-context)
-  - [7.4. Week 4: Optimization](#74-week-4-optimization)
-- [8. Appendix D: Measuring Success](#8-appendix-d-measuring-success)
-  - [8.1. Context Efficiency Metrics](#81-context-efficiency-metrics)
-  - [8.2. Code Quality Metrics](#82-code-quality-metrics)
-  - [8.3. Productivity Metrics](#83-productivity-metrics)
-- [9. Conclusion](#9-conclusion)
+- [2. Sources](#2-sources)
+- [3. General Best Practices](#3-general-best-practices)
+  - [3.1. Test-Driven Development (TDD)](#31-test-driven-development-tdd)
+  - [3.2. Continuous Quality Gates](#32-continuous-quality-gates)
+  - [3.3. Code Review - Including AI's Own Work](#33-code-review---including-ais-own-work)
+  - [3.4. Incremental Commits with Clear Messages](#34-incremental-commits-with-clear-messages)
+  - [3.5. Monorepo Architecture](#35-monorepo-architecture)
+- [4. Core Recommendations by Category](#4-core-recommendations-by-category)
+  - [4.1. Context Management (Most Critical)](#41-context-management-most-critical)
+  - [4.2. Planning \& Architecture](#42-planning--architecture)
+  - [4.3. Tool Usage \& Automation](#43-tool-usage--automation)
+  - [4.4. Workflow Optimization](#44-workflow-optimization)
+  - [4.5. Production Code Quality](#45-production-code-quality)
+  - [4.6. Advanced Patterns](#46-advanced-patterns)
+  - [4.7. Testing Authenticated Routes](#47-testing-authenticated-routes)
+  - [4.8. Architecture \& Design](#48-architecture--design)
+- [5. Contradictions \& Trade-offs](#5-contradictions--trade-offs)
+  - [5.1. Skills vs Context Bloat](#51-skills-vs-context-bloat)
+  - [5.2. Custom Subagents vs Clone Pattern](#52-custom-subagents-vs-clone-pattern)
+  - [5.3. Auto-Formatting Hooks](#53-auto-formatting-hooks)
+  - [5.4. Planning Mode vs Manual Plans](#54-planning-mode-vs-manual-plans)
+  - [5.5. Documentation Volume](#55-documentation-volume)
+- [6. Appendix A: Source Mapping Table](#6-appendix-a-source-mapping-table)
+- [7. Appendix B: Complete Recommendation Set](#7-appendix-b-complete-recommendation-set)
+  - [7.1. Essential Practices (Do These First)](#71-essential-practices-do-these-first)
+  - [7.2. High-Impact Practices (Implement Soon)](#72-high-impact-practices-implement-soon)
+  - [7.3. Advanced Practices (For Experienced Users)](#73-advanced-practices-for-experienced-users)
+  - [7.4. Practices to Avoid](#74-practices-to-avoid)
+- [8. Appendix C: Quick Start Workflow](#8-appendix-c-quick-start-workflow)
+  - [8.1. Week 1: Foundations](#81-week-1-foundations)
+  - [8.2. Week 2: Quality Systems](#82-week-2-quality-systems)
+  - [8.3. Week 3: Advanced Context](#83-week-3-advanced-context)
+  - [8.4. Week 4: Optimization](#84-week-4-optimization)
+- [9. Appendix D: Measuring Success](#9-appendix-d-measuring-success)
+  - [9.1. Context Efficiency Metrics](#91-context-efficiency-metrics)
+  - [9.2. Code Quality Metrics](#92-code-quality-metrics)
+  - [9.3. Productivity Metrics](#93-productivity-metrics)
+- [10. Conclusion](#10-conclusion)
 
 
 ## 1. Executive Summary
@@ -52,19 +53,38 @@ After analyzing 12 detailed sources spanning personal experiences, official Anth
 
 3. **Simplicity Beats Complexity**: The most effective workflows avoid over-engineering. Simple control loops outperform multi-agent systems. Low-level tools (Bash, Read, Edit) plus selective high-level abstractions beat heavy RAG or complex frameworks. LLMs are fragile; additional complexity makes debugging exponentially harder.
 
-## 2. General Best Practices
 
-### 2.1. Why These Matter More with agentic AI coding
+*Total word count: 4,987 words*<br />
+*Reading Time: ~25min (although not intended to be read through from start to finish but more so as a reference manual)*
 
-Traditional software engineering best practices become **even more critical** when working with AI because:
+## 2. Sources
+
+The following sources were analyzed to create this comprehensive guide:
+
+| Title | Author | Published | Source |
+|-------|--------|-----------|--------|
+| 6 Weeks of Claude Code | Puzzmo Blog | 2025-07-29 | [Link](https://blog.puzzmo.com/posts/2025/07/30/six-weeks-of-claude-code/) |
+| Claude Code Best Practices | @AnthropicAI | - | [Link](https://www.anthropic.com/engineering/claude-code-best-practices) |
+| Claude Code Is All You Need | - | - | [Link](https://dwyer.co.za/static/claude-code-is-all-you-need.html) |
+| Getting Good Results from Claude Code | Chris Dzombak | 2025-08-08 | [Link](https://www.dzombak.com/blog/2025/08/getting-good-results-from-claude-code/) |
+| How Anthropic teams use Claude Code | @AnthropicAI | - | [Link](https://www.anthropic.com/news/how-anthropic-teams-use-claude-code) |
+| The ULTIMATE AI Coding Guide for Developers (Claude Code) | Sabrina Ramonov 🍄 | 2025-07-05 | [Link](https://www.sabrina.dev/p/ultimate-ai-coding-guide-claude-code) |
+| Turning Claude Code Into My Best Design Partner | Between the Prompts | 2025-08-17 | [Link](https://betweentheprompts.com/design-partner/) |
+| What makes Claude Code so damn good (and how to recreate that magic in your agent)!? | vivek | 2025-08-21 | [Link](https://minusx.ai/blog/decoding-claude-code/) |
+| "If You're Not Using These Things With CC, Then Maybe the Problem Is *You*" | CaptainCrouton89 | 2025-09-12 | [Link](https://old.reddit.com/r/ClaudeAI/comments/1nfa4kj/if_youre_not_using_these_things_with_cc_then/) |
+| Building a Personal AI Factory | John Rush | 2025-07-01 | [Link](https://www.john-rush.com/posts/ai-20250701.html) |
+| How I Use Every Claude Code Feature | Shrivu Shankar | 2025-11-01 | [Link](https://blog.sshh.io/p/how-i-use-every-claude-code-feature) |
+| Claude Code is a Beast – Tips from 6 Months of Hardcore Use | JokeGold5455 | 2025-10-29 | [Link](https://www.reddit.com/r/ClaudeAI/comments/1oivjvm/claude_code_is_a_beast_tips_from_6_months_of/) |
+
+## 3. General Best Practices
+
+Traditional software engineering best practices are important to follow and the following become **even more critical** when working with AI because:
 - AI agents lack human judgment and make mistakes humans wouldn't
 - Errors compound faster in autonomous systems
 - Code review is harder when you didn't write the code
 - Technical debt accumulates invisibly without strict practices
 
-### 2.2. Core General Practices
-
-#### 2.2.1. Test-Driven Development (TDD)
+### 3.1. Test-Driven Development (TDD)
 **Sources**: Claude_Code_Best_Practices (Anthropic), Ultimate_AI_Coding_Guide, Getting_Good_Results, 6_months_hardcore_use
 
 **Why More Important with AI**: AI-generated code often "works" superficially but contains subtle bugs. Tests provide the only reliable validation mechanism.
@@ -87,7 +107,7 @@ Always run turbo typecheck lint."
 
 **Priority**: ✅ Highly recommended (High impact, moderate effort, well-substantiated)
 
-#### 2.2.2. Continuous Quality Gates
+### 3.2. Continuous Quality Gates
 **Sources**: 6_months_hardcore_use, Ultimate_AI_Coding_Guide, Getting_Good_Results, Claude_Code_Best_Practices
 
 **Implementation**: Use hooks to enforce quality automatically:
@@ -111,7 +131,7 @@ Always run turbo typecheck lint."
 
 **Priority**: ✅ Highly recommended (High impact, medium effort, proven results)
 
-#### 2.2.3. Code Review - Including AI's Own Work
+### 3.3. Code Review - Including AI's Own Work
 **Sources**: Getting_Good_Results, How_Anthropic_teams_use, Ultimate_AI_Coding_Guide, 6_months_hardcore_use
 
 **Critical Insight**: "I believe I'm ultimately responsible for the code in a PR with my name on it, regardless of how it was produced" - Chris Dzombak
@@ -130,7 +150,7 @@ Always run turbo typecheck lint."
 
 **Priority**: ✅ Highly recommended (Critical for production code)
 
-#### 2.2.4. Incremental Commits with Clear Messages
+### 3.4. Incremental Commits with Clear Messages
 **Sources**: Claude_Code_Best_Practices, Getting_Good_Results, Ultimate_AI_Coding_Guide, Building_AI_Factory
 
 **Pattern**: Commit early and often with meaningful messages
@@ -148,7 +168,7 @@ can revert to a previous state if something goes wrong."
 
 **Priority**: ✅ Highly recommended (Essential for collaboration and rollback)
 
-#### 2.2.5. Monorepo Architecture
+### 3.5. Monorepo Architecture
 **Sources**: 6_Weeks_of_Claude_Code, what_makes_CC_good, How_I_Use_Every_Feature
 
 **Why It Matters**: Monorepos provide AI with comprehensive context in one place
@@ -160,11 +180,11 @@ can revert to a previous state if something goes wrong."
 
 **Priority**: ⚠️ Context-dependent (High value for new projects, difficult migration for existing codebases)
 
-## 3. Core Recommendations by Category
+## 4. Core Recommendations by Category
 
-### 3.1. Category 1: Context Management (Most Critical)
+### 4.1. Context Management (Most Critical)
 
-#### 3.1.1. 1.1 CLAUDE.md File Structure
+#### 4.1.1. CLAUDE.md File Structure
 **Sources**: ALL 12 sources mention this
 **Frequency**: Unanimous consensus
 
@@ -201,7 +221,7 @@ can revert to a previous state if something goes wrong."
 
 **Priority**: ✅ Highly recommended (Highest impact practice, low effort)
 
-#### 3.1.2. 1.2 Aggressive Context Clearing
+#### 4.1.2. Aggressive Context Clearing
 **Sources**: if_youre_not_using_these, How_I_Use_Every_Feature, Claude_Code_Best_Practices
 
 **Rules**:
@@ -219,7 +239,7 @@ can revert to a previous state if something goes wrong."
 
 **Priority**: ✅ Highly recommended (Critical for quality maintenance)
 
-#### 3.1.3. 1.3 Documentation Systems
+#### 4.1.3. Documentation Systems
 
 **Dev Docs System** (from 6_months_hardcore_use, Design_Partner, Building_AI_Factory):
 
@@ -239,9 +259,9 @@ can revert to a previous state if something goes wrong."
 
 **Priority**: ✅ Highly recommended (Prevents "losing the plot", high impact)
 
-### 3.2. Category 2: Planning & Architecture
+### 4.2. Planning & Architecture
 
-#### 3.2.1. 2.1 Planning Mode is Mandatory
+#### 4.2.1. Planning Mode is Mandatory
 **Sources**: Claude_Code_Best_Practices, 6_months_hardcore_use, if_youre_not_using_these, Ultimate_AI_Coding_Guide, Design_Partner
 
 **Consensus**: Planning before coding is non-negotiable for production work
@@ -277,7 +297,7 @@ can revert to a previous state if something goes wrong."
 
 **Priority**: ✅ Highly recommended (Essential for complex features)
 
-#### 3.2.2. 2.2 Explore, Plan, Code, Commit
+#### 4.2.2. Explore, Plan, Code, Commit
 **Sources**: Claude_Code_Best_Practices, How_Anthropic_teams_use
 
 **The Workflow**:
@@ -290,7 +310,7 @@ can revert to a previous state if something goes wrong."
 
 **Priority**: ✅ Highly recommended (Standard workflow pattern)
 
-#### 3.2.3. 2.3 Specification Documents
+#### 4.2.3. Specification Documents
 **Sources**: Getting_Good_Results, Claude_Code_Is_All_You_Need, Design_Partner
 
 **Pattern**: Write clear specs before starting
@@ -304,9 +324,9 @@ can revert to a previous state if something goes wrong."
 
 **Priority**: ✅ Highly recommended (High impact for complex features)
 
-### 3.3. Category 3: Tool Usage & Automation
+### 4.3. Tool Usage & Automation
 
-#### 3.3.1. 3.1 Skills System (AI-Specific)
+#### 4.3.1. Skills System (AI-Specific)
 **Sources**: 6_months_hardcore_use, How_I_Use_Every_Feature, Claude_Code_Best_Practices
 
 **Critical Discovery**: Skills need auto-activation to work reliably
@@ -361,7 +381,7 @@ can revert to a previous state if something goes wrong."
 
 **Priority**: ✅ Highly recommended (Transforms skills from useless to essential)
 
-#### 3.3.2. 3.2 Hooks for Quality Control
+#### 4.3.2. Hooks for Quality Control
 **Sources**: 6_months_hardcore_use, How_I_Use_Every_Feature, if_youre_not_using_these
 
 **Consensus Hook Types**:
@@ -389,7 +409,7 @@ Provide fire-and-forget guidance if suboptimal patterns detected
 
 **Priority**: ✅ Highly recommended (Prevents errors from persisting)
 
-#### 3.3.3. 3.3 Subagents/Task Delegation
+#### 4.3.3. Subagents/Task Delegation
 **Sources**: Claude_Code_Best_Practices, Building_AI_Factory, 6_months_hardcore_use, How_I_Use_Every_Feature
 
 **Two Competing Philosophies**:
@@ -426,7 +446,7 @@ Preferred alternative:
 
 **Priority**: ⚠️ Context-dependent (Depends on task complexity and context needs)
 
-#### 3.3.4. 3.4 Slash Commands
+#### 4.3.4. Slash Commands
 **Sources**: Claude_Code_Best_Practices, 6_months_hardcore_use, if_youre_not_using_these
 
 **Philosophy**: Simple shortcuts, not complex workflows
@@ -453,7 +473,7 @@ Preferred alternative:
 
 **Priority**: ✅ Highly recommended (Low effort, high productivity gain)
 
-#### 3.3.5. 3.5 MCP Strategy Evolution
+#### 4.3.5. MCP Strategy Evolution
 **Sources**: How_I_Use_Every_Feature, what_makes_CC_good, if_youre_not_using_these
 
 **Critical Insight**: Heavy MCP usage is an anti-pattern
@@ -495,9 +515,9 @@ Default Supabase MCP: Destroys context
 
 **Priority**: ✅ Highly recommended (Critical for context management)
 
-### 3.4. Category 4: Workflow Optimization
+### 4.4. Workflow Optimization
 
-#### 3.4.1. 4.1 Specificity in Instructions
+#### 4.4.1. Specificity in Instructions
 **Sources**: Claude_Code_Best_Practices, Ultimate_AI_Coding_Guide, 6_months_hardcore_use
 
 **Consensus**: Vague instructions produce vague results
@@ -523,7 +543,7 @@ Default Supabase MCP: Destroys context
 
 **Priority**: ✅ Highly recommended (Foundational practice)
 
-#### 3.4.2. 4.2 Visual References
+#### 4.4.2. Visual References
 **Sources**: Claude_Code_Best_Practices, How_Anthropic_teams_use, Poster_Maker_example
 
 **Methods**:
@@ -545,7 +565,7 @@ Default Supabase MCP: Destroys context
 
 **Priority**: ✅ Highly recommended (Essential for UI work, helpful for debugging)
 
-#### 3.4.3. 4.3 Course Correction Techniques
+#### 4.4.3. Course Correction Techniques
 **Sources**: Claude_Code_Best_Practices, 6_months_hardcore_use
 
 **Four Correction Tools**:
@@ -561,7 +581,7 @@ Default Supabase MCP: Destroys context
 
 **Priority**: ✅ Highly recommended (Essential skill for effective use)
 
-#### 3.4.4. 4.4 Data Input Methods
+#### 4.4.4. Data Input Methods
 **Sources**: Claude_Code_Best_Practices, 6_months_hardcore_use
 
 **Multiple Methods**:
@@ -576,7 +596,7 @@ Default Supabase MCP: Destroys context
 
 **Priority**: ✅ Highly recommended (Flexibility improves workflows)
 
-#### 3.4.5. 4.5 Git Worktrees for Parallel Work
+#### 4.4.5. Git Worktrees for Parallel Work
 **Sources**: Claude_Code_Best_Practices, Building_AI_Factory, 6_months_hardcore_use
 
 **Pattern**: Run multiple Claude instances on independent tasks
@@ -599,9 +619,9 @@ cd ../project-feature-b && claude
 
 **Priority**: ⚠️ Context-dependent (High value for experienced users with parallel workflows)
 
-### 3.5. Category 5: Production Code Quality
+### 4.5. Production Code Quality
 
-#### 3.5.1. 5.1 Error Handling Standards
+#### 4.5.1. Error Handling Standards
 **Sources**: Ultimate_AI_Coding_Guide, 6_months_hardcore_use, Getting_Good_Results
 
 **Pattern**: Explicit error handling with monitoring
@@ -636,7 +656,7 @@ Show non-blocking reminder:
 
 **Priority**: ✅ Highly recommended (Critical for production reliability)
 
-#### 3.5.2. 5.2 Testing Standards
+#### 4.5.2. Testing Standards
 **Sources**: Ultimate_AI_Coding_Guide, Getting_Good_Results, How_Anthropic_teams_use
 
 **Testing Checklist** (from Ultimate_AI_Coding_Guide):
@@ -662,7 +682,7 @@ Show non-blocking reminder:
 
 **Priority**: ✅ Highly recommended (Essential for quality assurance)
 
-#### 3.5.3. 5.3 Type Safety
+#### 4.5.3. Type Safety
 **Sources**: Ultimate_AI_Coding_Guide, 6_Weeks_of_Claude_Code
 
 **Consensus on Tech Stack**:
@@ -687,9 +707,9 @@ export interface CustomOverride {
 
 **Priority**: ✅ Highly recommended (Prevents runtime errors)
 
-### 3.6. Category 6: Advanced Patterns
+### 4.6. Advanced Patterns
 
-#### 3.6.1. 6.1 Headless Mode for Automation
+#### 4.6.1. Headless Mode for Automation
 **Sources**: Claude_Code_Best_Practices, if_youre_not_using_these
 
 **Use Cases**:
@@ -724,7 +744,7 @@ claude -p "Analyze issue #123 and assign labels" \
 
 **Priority**: ⚠️ Context-dependent (High value for automation, requires setup)
 
-#### 3.6.2. 6.2 Multi-Claude Verification
+#### 4.6.2. Multi-Claude Verification
 **Sources**: Claude_Code_Best_Practices, Building_AI_Factory
 
 **Pattern**: Separate contexts for writing and reviewing
@@ -752,7 +772,7 @@ o3: Generate plan (asks clarifying questions)
 
 **Priority**: ⚠️ Context-dependent (High value for critical code, adds complexity)
 
-#### 3.6.3. 6.3 Background Process Management
+#### 4.6.3. Background Process Management
 **Sources**: 6_months_hardcore_use
 
 **Problem**: Can't see backend service logs while they run
@@ -791,14 +811,14 @@ module.exports = {
 
 **Priority**: ⚠️ Context-dependent (Essential for microservices, overkill for simple apps)
 
-#### 3.6.4. 6.4 Utility Scripts in Skills
+#### 4.6.4. Utility Scripts in Skills
 **Sources**: 6_months_hardcore_use, Claude_Code_Best_Practices
 
 **Pattern**: Attach scripts to skills instead of documenting procedures
 
 **Example**:
 
-### Testing Authenticated Routes
+### 4.7. Testing Authenticated Routes
 
 Use the provided test-auth-route.js script:
 
@@ -817,9 +837,9 @@ The script handles:
 
 **Priority**: ✅ Highly recommended (Reduces cognitive load, improves consistency)
 
-### Category 7: Architecture & Design
+### 4.8. Architecture & Design
 
-#### 7.1 Simple Control Loops
+#### 4.8.1. Simple Control Loops
 **Sources**: what_makes_CC_good, How_I_Use_Every_Feature
 
 **Critical Insight**: "Debuggability >>> complicated hand-tuned multi-agent lang-chain-graph-node mishmash"
@@ -839,7 +859,7 @@ The script handles:
 
 **Priority**: ✅ Highly recommended (Foundational architecture decision)
 
-#### 7.2 LLM Search > RAG
+#### 4.8.2. LLM Search > RAG
 **Sources**: what_makes_CC_good, Claude_Code_Best_Practices
 
 **Claude Code Approach**: Complex ripgrep, jq, find commands (no RAG)
@@ -863,7 +883,7 @@ LLM Search:
 
 **Priority**: ✅ Highly recommended (Architectural decision with major implications)
 
-#### 7.3 Tool Abstraction Level
+#### 4.8.3. Tool Abstraction Level
 **Sources**: what_makes_CC_good, Claude_Code_Best_Practices
 
 **Question**: Generic high-level vs low-level tools?
@@ -887,9 +907,9 @@ Highly deterministic → High-level tool (WebFetch)
 
 **Priority**: ⚠️ Context-dependent (Design decision for custom tools)
 
-## 4. Contradictions & Trade-offs
+## 5. Contradictions & Trade-offs
 
-### 4.1. Contradiction 1: Skills vs Context Bloat
+### 5.1. Skills vs Context Bloat
 
 **Position A** (6_months_hardcore_use): Create many specialized skills
 - frontend-dev-guidelines (398 lines + 10 resources)
@@ -906,7 +926,7 @@ Highly deterministic → High-level tool (WebFetch)
 - Token budget determines skill count
 - Measure baseline context cost and adjust
 
-### 4.2. Contradiction 2: Custom Subagents vs Clone Pattern
+### 5.2. Custom Subagents vs Clone Pattern
 
 **Position A** (6_months_hardcore_use): Build specialized subagents
 - code-architecture-reviewer
@@ -927,7 +947,7 @@ Highly deterministic → High-level tool (WebFetch)
 - Context availability is deciding factor
 - Most users should start with clone pattern, add specialized agents only when clear need emerges
 
-### 4.3. Contradiction 3: Auto-Formatting Hooks
+### 5.3. Auto-Formatting Hooks
 
 **Position A** (6_months_hardcore_use initially): Auto-format after edits
 - Consistency without manual intervention
@@ -943,7 +963,7 @@ Highly deterministic → High-level tool (WebFetch)
 - Format when you manually edit files anyway
 - Avoid the token cost for marginal convenience
 
-### 4.4. Contradiction 4: Planning Mode vs Manual Plans
+### 5.4. Planning Mode vs Manual Plans
 
 **Position A**: Use built-in Planning Mode
 - Dedicated mode gets better codebase research
@@ -960,7 +980,7 @@ Highly deterministic → High-level tool (WebFetch)
 - Use custom slash commands for plan refinement
 - Best of both worlds
 
-### 4.5. Contradiction 5: Documentation Volume
+### 5.5. Documentation Volume
 
 **Position A** (6_months_hardcore_use): Extensive documentation
 - 850+ markdown files
@@ -979,7 +999,7 @@ Highly deterministic → High-level tool (WebFetch)
 - Progressive disclosure is key
 - Point to docs rather than embedding
 
-## 5. Appendix A: Source Mapping Table
+## 6. Appendix A: Source Mapping Table
 
 | Practice | Sources (Count) | Priority |
 |----------|----------------|----------|
@@ -999,9 +1019,9 @@ Highly deterministic → High-level tool (WebFetch)
 | PM2 for services | 1 source | ❌ Low |
 | Voice-to-text | 1 source | ❌ Low |
 
-## 6. Appendix B: Complete Recommendation Set
+## 7. Appendix B: Complete Recommendation Set
 
-### 6.1. Essential Practices (Do These First)
+### 7.1. Essential Practices (Do These First)
 
 1. **Create CLAUDE.md** (100-200 lines max, document what Claude gets wrong)
 2. **Use Planning Mode** (or custom planning workflow before any coding)
@@ -1010,7 +1030,7 @@ Highly deterministic → High-level tool (WebFetch)
 5. **Be specific** (detailed instructions beat vague descriptions)
 6. **Review all code** (manual human review is non-negotiable)
 
-### 6.2. High-Impact Practices (Implement Soon)
+### 7.2. High-Impact Practices (Implement Soon)
 
 7. **Dev docs system** (plan.md, context.md, tasks.md for features)
 8. **Skills with auto-activation hooks** (see 6_months_hardcore_use examples)
@@ -1020,7 +1040,7 @@ Highly deterministic → High-level tool (WebFetch)
 12. **Subagent delegation** (start with Task(...) clone pattern)
 13. **Course correction** (learn ESC, double-ESC, undo patterns)
 
-### 6.3. Advanced Practices (For Experienced Users)
+### 7.3. Advanced Practices (For Experienced Users)
 
 14. **Git worktrees** (parallel development on independent features)
 15. **Multi-Claude verification** (separate contexts for write/review)
@@ -1030,7 +1050,7 @@ Highly deterministic → High-level tool (WebFetch)
 19. **Utility scripts in Skills** (attach ready-to-use tools)
 20. **Living documentation** (update plans during implementation)
 
-### 6.4. Practices to Avoid
+### 7.4. Practices to Avoid
 
 ❌ **Auto-formatting hooks** (consumes excessive tokens)
 ❌ **Heavy MCP usage** (>20k tokens cripples context)
@@ -1040,55 +1060,55 @@ Highly deterministic → High-level tool (WebFetch)
 ❌ **Skipping planning** (jumping straight to code)
 ❌ **Letting context fill to limits** (quality degrades)
 
-## 7. Appendix C: Quick Start Workflow
+## 8. Appendix C: Quick Start Workflow
 
 For engineers new to Claude Code who want production-quality results:
 
-### 7.1. Week 1: Foundations
+### 8.1. Week 1: Foundations
 1. Create CLAUDE.md with project commands and testing instructions
 2. Practice Planning Mode → review → implement → commit workflow
 3. Start clearing context at 60k tokens
 4. Review all AI-generated code manually
 
-### 7.2. Week 2: Quality Systems
+### 8.2. Week 2: Quality Systems
 5. Set up TDD workflow (tests first, commit separately)
 6. Create 2-3 custom slash commands for common tasks
 7. Implement basic build checker hook
 8. Add visual references to UI work
 
-### 7.3. Week 3: Advanced Context
+### 8.3. Week 3: Advanced Context
 9. Implement dev docs system (plan/context/tasks files)
 10. Create 1-2 Skills for your most common patterns
 11. Add auto-activation hook for skills
 12. Practice using subagents for code review
 
-### 7.4. Week 4: Optimization
+### 8.4. Week 4: Optimization
 13. Audit your context usage (/context mid-session)
 14. Optimize CLAUDE.md (remove bloat, add pointers)
 15. Add quality gate hooks (tests, linting)
 16. Experiment with git worktrees for parallel work
 
-## 8. Appendix D: Measuring Success
+## 9. Appendix D: Measuring Success
 
-### 8.1. Context Efficiency Metrics
+### 9.1. Context Efficiency Metrics
 - Baseline context cost: <20k tokens (10% of 200k)
 - CLAUDE.md size: <2000 tokens
 - MCP tools total: <20k tokens
 - Context clearing frequency: Every 60k tokens or less
 
-### 8.2. Code Quality Metrics
+### 9.2. Code Quality Metrics
 - Test coverage: >80% for new code
 - TypeScript errors: Zero before commits (enforced by hooks)
 - Code review findings: Track common issues, update CLAUDE.md
 - Production bugs from AI code: Should decrease over time
 
-### 8.3. Productivity Metrics
+### 9.3. Productivity Metrics
 - Time from plan to PR: Track and optimize
 - Number of plan iterations: Should stabilize at 1-3
 - Context compactions needed: Should decrease with better practices
 - Parallel tasks with worktrees: Can scale to 3-4 simultaneously
 
-## 9. Conclusion
+## 10. Conclusion
 
 Claude Code is a powerful tool that amplifies both good and bad practices. The most successful users:
 
