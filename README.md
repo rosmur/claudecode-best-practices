@@ -1,6 +1,6 @@
 # Claude Code Best Practices
 
-This is a simple repo to summarize various articles/blog posts about the best ways to use Claude Code and synthesize this into a unified best practices guide here: [Claude Code Best Practices](docs/index.md). This is authored by Claude Code itself.
+This is a simple repo to summarize various articles/blog posts about the best ways to use Claude Code and synthesize this into a unified best practices guide here: [Claude Code Best Practices](index.md). This is authored by Claude Code itself.
 
 Given Claude Code is only a few months old now and agentic coding is still very much a nascent domain, the intent is to have this repo stay live/current. Please consider contributing/participating as detailed below.
 
