@@ -6,6 +6,8 @@ toc: true
 
 **This guide was written by Claude Code synthesizing the information contained in the sources listed below and following this [analysis prompt](../analysis-prompt.md).**
 
+{:toc}
+1. This ordered list will be replaced by the TOC
 
 ## 1. Executive Summary
 
