@@ -8,10 +8,3 @@ toc:
     enabled: true
     h_min: 2
     h_max: 3
-
-# Configure sidebar to show single page structure
-defaults:
-  - scope:
-      path: ""
-    values:
-      toc: true
