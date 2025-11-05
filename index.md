@@ -8,7 +8,7 @@ toc: true
 
 - [1. Executive Summary](#1-executive-summary)
 - [2. Sources](#2-sources)
-- [3. General Best Practices](#3-general-best-practices)
+- [3. General Software Engineering Best Practices](#3-general-software-engineering-best-practices)
   - [3.1. Test-Driven Development (TDD)](#31-test-driven-development-tdd)
   - [3.2. Continuous Quality Gates](#32-continuous-quality-gates)
   - [3.3. Code Review - Including AI's Own Work](#33-code-review---including-ais-own-work)
@@ -80,13 +80,14 @@ The following sources were analyzed to create this comprehensive guide:
 | How I Use Every Claude Code Feature | Shrivu Shankar | 2025-11-01 | [Link](https://blog.sshh.io/p/how-i-use-every-claude-code-feature) |
 | Claude Code is a Beast – Tips from 6 Months of Hardcore Use | JokeGold5455 | 2025-10-29 | [Link](https://www.reddit.com/r/ClaudeAI/comments/1oivjvm/claude_code_is_a_beast_tips_from_6_months_of/) |
 
-## 3. General Best Practices
+## 3. General Software Engineering Best Practices
 
 Traditional software engineering best practices are important to follow and the following become **even more critical** when working with AI because:
-- AI agents lack human judgment and make mistakes humans wouldn't
 - Errors compound faster in autonomous systems
 - Code review is harder when you didn't write the code
 - Technical debt accumulates invisibly without strict practices
+- AI agents lack human judgment and make mistakes humans wouldn't
+
 
 ### 3.1. Test-Driven Development (TDD)
 **Sources**: Claude_Code_Best_Practices (Anthropic), Ultimate_AI_Coding_Guide, Getting_Good_Results, 6_months_hardcore_use
