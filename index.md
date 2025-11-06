@@ -4,7 +4,7 @@ layout: home
 toc: true
 ---
 
-**This guide was written by Claude Code synthesizing the information contained in the sources listed below and following this [analysis prompt](../analysis-prompt.md).**
+**This guide was written by Claude Code synthesizing the information contained in the sources listed below and following this [analysis prompt](https://github.com/rosmur/claudecode-best-practices/blob/main/analysis-prompt.md).**
 
 - [1. Executive Summary](#1-executive-summary)
 - [2. Sources](#2-sources)
