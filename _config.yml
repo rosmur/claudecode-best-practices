@@ -6,5 +6,10 @@ description: Comprehensive analysis and guide for effective Claude Code usage
 # Enable in-page TOC
 toc:
     enabled: true
-    h_min: 2
+    h_min: 1
     h_max: 3
+
+social_links:
+      github: rosmur
+      # twitter: yourtwitterhandle
+      # facebook: yourlinkedinprofile
