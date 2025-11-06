@@ -14,36 +14,24 @@ toc: true
   - [3.3. Code Review - Including AI's Own Work](#33-code-review---including-ais-own-work)
   - [3.4. Incremental Commits with Clear Messages](#34-incremental-commits-with-clear-messages)
   - [3.5. Monorepo Architecture](#35-monorepo-architecture)
-- [4. Core Recommendations by Category](#4-core-recommendations-by-category)
+- [4. Claude Code Best Practices](#4-claude-code-best-practices)
   - [4.1. Context Management (Most Critical)](#41-context-management-most-critical)
   - [4.2. Planning \& Architecture](#42-planning--architecture)
   - [4.3. Tool Usage \& Automation](#43-tool-usage--automation)
   - [4.4. Workflow Optimization](#44-workflow-optimization)
   - [4.5. Production Code Quality](#45-production-code-quality)
   - [4.6. Advanced Patterns](#46-advanced-patterns)
-  - [4.7. Testing Authenticated Routes](#47-testing-authenticated-routes)
-  - [4.8. Architecture \& Design](#48-architecture--design)
 - [5. Contradictions \& Trade-offs](#5-contradictions--trade-offs)
   - [5.1. Skills vs Context Bloat](#51-skills-vs-context-bloat)
   - [5.2. Custom Subagents vs Clone Pattern](#52-custom-subagents-vs-clone-pattern)
   - [5.3. Auto-Formatting Hooks](#53-auto-formatting-hooks)
   - [5.4. Planning Mode vs Manual Plans](#54-planning-mode-vs-manual-plans)
   - [5.5. Documentation Volume](#55-documentation-volume)
-- [6. Appendix A: Source Mapping Table](#6-appendix-a-source-mapping-table)
-- [7. Appendix B: Complete Recommendation Set](#7-appendix-b-complete-recommendation-set)
-  - [7.1. Essential Practices (Do These First)](#71-essential-practices-do-these-first)
-  - [7.2. High-Impact Practices (Implement Soon)](#72-high-impact-practices-implement-soon)
-  - [7.3. Advanced Practices (For Experienced Users)](#73-advanced-practices-for-experienced-users)
-  - [7.4. Practices to Avoid](#74-practices-to-avoid)
-- [8. Appendix C: Quick Start Workflow](#8-appendix-c-quick-start-workflow)
-  - [8.1. Week 1: Foundations](#81-week-1-foundations)
-  - [8.2. Week 2: Quality Systems](#82-week-2-quality-systems)
-  - [8.3. Week 3: Advanced Context](#83-week-3-advanced-context)
-  - [8.4. Week 4: Optimization](#84-week-4-optimization)
-- [9. Appendix D: Measuring Success](#9-appendix-d-measuring-success)
-  - [9.1. Context Efficiency Metrics](#91-context-efficiency-metrics)
-  - [9.2. Code Quality Metrics](#92-code-quality-metrics)
-  - [9.3. Productivity Metrics](#93-productivity-metrics)
+- [Appendices](#appendices)
+  - [6. Appendix A: Source Mapping Table](#6-appendix-a-source-mapping-table)
+  - [7. Appendix B: Complete Recommendation Set](#7-appendix-b-complete-recommendation-set)
+  - [8. Appendix C: Quick Start Workflow](#8-appendix-c-quick-start-workflow)
+  - [9. Appendix D: Measuring Success](#9-appendix-d-measuring-success)
 - [10. Conclusion](#10-conclusion)
 
 
@@ -82,7 +70,7 @@ The following sources were analyzed to create this comprehensive guide:
 
 ## 3. General Software Engineering Best Practices
 
-Traditional software engineering best practices are important to follow and the following become **even more critical** when working with AI because:
+Traditional software engineering best practices not specific to AI coding are still important and the following become **even more critical** when working with AI because:
 - Errors compound faster in autonomous systems
 - Code review is harder when you didn't write the code
 - Technical debt accumulates invisibly without strict practices
@@ -185,7 +173,9 @@ can revert to a previous state if something goes wrong."
 
 **Priority**: ⚠️ Context-dependent (High value for new projects, difficult migration for existing codebases)
 
-## 4. Core Recommendations by Category
+## 4. Claude Code Best Practices
+
+Core Recommendations by Category
 
 ### 4.1. Context Management (Most Critical)
 
@@ -518,6 +508,74 @@ vs
 Default Supabase MCP: Destroys context
 ```
 
+#### 4.3.6. Simple Control Loops
+**Sources**: what_makes_CC_good, How_I_Use_Every_Feature
+
+**Critical Insight**: "Debuggability >>> complicated hand-tuned multi-agent lang-chain-graph-node mishmash"
+
+**Claude Code Architecture**:
+- One main thread (flat message list)
+- Maximum one branch (subagent results added to main history)
+- No complex multi-agent systems
+- Simple iterative tool calling for most tasks
+
+**Quote**: "Despite multi-agent systems being all the rage, Claude Code has just one main thread... I highly doubt your app needs a multi-agent system."
+
+**Reasoning**:
+- Every abstraction layer makes debugging exponentially harder
+- Deviates from general model improvement trajectory
+- LLMs are fragile; added complexity breaks unpredictably
+
+**Priority**: ✅ Highly recommended (Foundational architecture decision)
+
+#### 4.3.7. LLM Search > RAG
+**Sources**: what_makes_CC_good, Claude_Code_Best_Practices
+
+**Claude Code Approach**: Complex ripgrep, jq, find commands (no RAG)
+
+**Why No RAG**:
+
+RAG introduces hidden failure modes:
+- What similarity function?
+- What reranker?
+- How to chunk code?
+- How to handle large JSON/logs?
+
+LLM Search:
+- Looks at 10 lines to understand structure
+- Looks at 10 more if needed (just like humans)
+- RL learnable (BigLabs already working on this)
+- Model does heavy lifting (fewer moving parts)
+
+
+**Quote**: "This is the Camera vs Lidar of the LLM era"
+
+**Priority**: ✅ Highly recommended (Architectural decision with major implications)
+
+#### 4.3.8. Tool Abstraction Level
+**Sources**: what_makes_CC_good, Claude_Code_Best_Practices
+
+**Question**: Generic high-level vs low-level tools?
+
+**Answer**: Both, strategically chosen
+
+**Claude Code Tools**:
+- **Low-level**: Bash, Read, Write (flexibility)
+- **Medium-level**: Edit, Grep, Glob (frequently used patterns)
+- **High-level**: Task, WebFetch, exit_plan_mode (deterministic workflows)
+
+**Decision Framework**:
+
+```
+Use frequency × Accuracy trade-off
+
+High frequency task → Dedicated tool (Grep, Glob)
+Low frequency → Use Bash
+Highly deterministic → High-level tool (WebFetch)
+```
+
+**Priority**: ⚠️ Context-dependent (Design decision for custom tools)
+
 **Priority**: ✅ Highly recommended (Critical for context management)
 
 ### 4.4. Workflow Optimization
@@ -821,96 +879,27 @@ module.exports = {
 
 **Pattern**: Attach scripts to skills instead of documenting procedures
 
-**Example**:
+**Example**: 
 
-### 4.7. Testing Authenticated Routes
-
-Use the provided test-auth-route.js script:
-
-```bash
-node scripts/test-auth-route.js http://localhost:3002/api/endpoint
-```
-
-The script handles:
-1. Gets refresh token from Keycloak
-2. Signs token with JWT secret
-3. Creates cookie header
-4. Makes authenticated request
+> Testing Authenticated Routes
+> 
+> Use the provided test-auth-route.js script:
+> 
+> ```bash
+> node scripts/test-auth-route.js http://localhost:3002/api/endpoint
+> ```
+> 
+> The script handles:
+> 1. Gets refresh token from Keycloak
+> 2. Signs token with JWT secret
+> 3. Creates cookie header
+> 4. Makes authenticated request
 
 
 **Benefit**: No reinventing the wheel each time; ready-to-use tools
 
 **Priority**: ✅ Highly recommended (Reduces cognitive load, improves consistency)
 
-### 4.8. Architecture & Design
-
-#### 4.8.1. Simple Control Loops
-**Sources**: what_makes_CC_good, How_I_Use_Every_Feature
-
-**Critical Insight**: "Debuggability >>> complicated hand-tuned multi-agent lang-chain-graph-node mishmash"
-
-**Claude Code Architecture**:
-- One main thread (flat message list)
-- Maximum one branch (subagent results added to main history)
-- No complex multi-agent systems
-- Simple iterative tool calling for most tasks
-
-**Quote**: "Despite multi-agent systems being all the rage, Claude Code has just one main thread... I highly doubt your app needs a multi-agent system."
-
-**Reasoning**:
-- Every abstraction layer makes debugging exponentially harder
-- Deviates from general model improvement trajectory
-- LLMs are fragile; added complexity breaks unpredictably
-
-**Priority**: ✅ Highly recommended (Foundational architecture decision)
-
-#### 4.8.2. LLM Search > RAG
-**Sources**: what_makes_CC_good, Claude_Code_Best_Practices
-
-**Claude Code Approach**: Complex ripgrep, jq, find commands (no RAG)
-
-**Why No RAG**:
-
-RAG introduces hidden failure modes:
-- What similarity function?
-- What reranker?
-- How to chunk code?
-- How to handle large JSON/logs?
-
-LLM Search:
-- Looks at 10 lines to understand structure
-- Looks at 10 more if needed (just like humans)
-- RL learnable (BigLabs already working on this)
-- Model does heavy lifting (fewer moving parts)
-
-
-**Quote**: "This is the Camera vs Lidar of the LLM era"
-
-**Priority**: ✅ Highly recommended (Architectural decision with major implications)
-
-#### 4.8.3. Tool Abstraction Level
-**Sources**: what_makes_CC_good, Claude_Code_Best_Practices
-
-**Question**: Generic high-level vs low-level tools?
-
-**Answer**: Both, strategically chosen
-
-**Claude Code Tools**:
-- **Low-level**: Bash, Read, Write (flexibility)
-- **Medium-level**: Edit, Grep, Glob (frequently used patterns)
-- **High-level**: Task, WebFetch, exit_plan_mode (deterministic workflows)
-
-**Decision Framework**:
-
-```
-Use frequency × Accuracy trade-off
-
-High frequency task → Dedicated tool (Grep, Glob)
-Low frequency → Use Bash
-Highly deterministic → High-level tool (WebFetch)
-```
-
-**Priority**: ⚠️ Context-dependent (Design decision for custom tools)
 
 ## 5. Contradictions & Trade-offs
 
@@ -1004,7 +993,9 @@ Highly deterministic → High-level tool (WebFetch)
 - Progressive disclosure is key
 - Point to docs rather than embedding
 
-## 6. Appendix A: Source Mapping Table
+## Appendices
+
+### 6. Appendix A: Source Mapping Table
 
 | Practice | Sources (Count) | Priority |
 |----------|----------------|----------|
@@ -1024,9 +1015,9 @@ Highly deterministic → High-level tool (WebFetch)
 | PM2 for services | 1 source | ❌ Low |
 | Voice-to-text | 1 source | ❌ Low |
 
-## 7. Appendix B: Complete Recommendation Set
+### 7. Appendix B: Complete Recommendation Set
 
-### 7.1. Essential Practices (Do These First)
+#### 7.1. Essential Practices (Do These First)
 
 1. **Create CLAUDE.md** (100-200 lines max, document what Claude gets wrong)
 2. **Use Planning Mode** (or custom planning workflow before any coding)
@@ -1035,7 +1026,7 @@ Highly deterministic → High-level tool (WebFetch)
 5. **Be specific** (detailed instructions beat vague descriptions)
 6. **Review all code** (manual human review is non-negotiable)
 
-### 7.2. High-Impact Practices (Implement Soon)
+#### 7.2. High-Impact Practices (Implement Soon)
 
 7. **Dev docs system** (plan.md, context.md, tasks.md for features)
 8. **Skills with auto-activation hooks** (see 6_months_hardcore_use examples)
@@ -1045,7 +1036,7 @@ Highly deterministic → High-level tool (WebFetch)
 12. **Subagent delegation** (start with Task(...) clone pattern)
 13. **Course correction** (learn ESC, double-ESC, undo patterns)
 
-### 7.3. Advanced Practices (For Experienced Users)
+#### 7.3. Advanced Practices (For Experienced Users)
 
 14. **Git worktrees** (parallel development on independent features)
 15. **Multi-Claude verification** (separate contexts for write/review)
@@ -1055,59 +1046,59 @@ Highly deterministic → High-level tool (WebFetch)
 19. **Utility scripts in Skills** (attach ready-to-use tools)
 20. **Living documentation** (update plans during implementation)
 
-### 7.4. Practices to Avoid
+#### 7.4. Practices to Avoid
 
-❌ **Auto-formatting hooks** (consumes excessive tokens)
-❌ **Heavy MCP usage** (>20k tokens cripples context)
-❌ **Complex multi-agent systems** (debugging nightmare)
-❌ **RAG for code search** (LLM search is simpler and better)
-❌ **Vague instructions** (leads to vague results)
-❌ **Skipping planning** (jumping straight to code)
-❌ **Letting context fill to limits** (quality degrades)
+- ❌ **Auto-formatting hooks** (consumes excessive tokens)
+- ❌ **Heavy MCP usage** (>20k tokens cripples context)
+- ❌ **Complex multi-agent systems** (debugging nightmare)
+- ❌ **RAG for code search** (LLM search is simpler and better)
+- ❌ **Vague instructions** (leads to vague results)
+- ❌ **Skipping planning** (jumping straight to code)
+- ❌ **Letting context fill to limits** (quality degrades)
 
-## 8. Appendix C: Quick Start Workflow
+### 8. Appendix C: Quick Start Workflow
 
 For engineers new to Claude Code who want production-quality results:
 
-### 8.1. Week 1: Foundations
+#### 8.1. Week 1: Foundations
 1. Create CLAUDE.md with project commands and testing instructions
 2. Practice Planning Mode → review → implement → commit workflow
 3. Start clearing context at 60k tokens
 4. Review all AI-generated code manually
 
-### 8.2. Week 2: Quality Systems
+#### 8.2. Week 2: Quality Systems
 5. Set up TDD workflow (tests first, commit separately)
 6. Create 2-3 custom slash commands for common tasks
 7. Implement basic build checker hook
 8. Add visual references to UI work
 
-### 8.3. Week 3: Advanced Context
+#### 8.3. Week 3: Advanced Context
 9. Implement dev docs system (plan/context/tasks files)
 10. Create 1-2 Skills for your most common patterns
 11. Add auto-activation hook for skills
 12. Practice using subagents for code review
 
-### 8.4. Week 4: Optimization
+#### 8.4. Week 4: Optimization
 13. Audit your context usage (/context mid-session)
 14. Optimize CLAUDE.md (remove bloat, add pointers)
 15. Add quality gate hooks (tests, linting)
 16. Experiment with git worktrees for parallel work
 
-## 9. Appendix D: Measuring Success
+### 9. Appendix D: Measuring Success
 
-### 9.1. Context Efficiency Metrics
+#### 9.1. Context Efficiency Metrics
 - Baseline context cost: <20k tokens (10% of 200k)
 - CLAUDE.md size: <2000 tokens
 - MCP tools total: <20k tokens
 - Context clearing frequency: Every 60k tokens or less
 
-### 9.2. Code Quality Metrics
+#### 9.2. Code Quality Metrics
 - Test coverage: >80% for new code
 - TypeScript errors: Zero before commits (enforced by hooks)
 - Code review findings: Track common issues, update CLAUDE.md
 - Production bugs from AI code: Should decrease over time
 
-### 9.3. Productivity Metrics
+#### 9.3. Productivity Metrics
 - Time from plan to PR: Track and optimize
 - Number of plan iterations: Should stabilize at 1-3
 - Context compactions needed: Should decrease with better practices
