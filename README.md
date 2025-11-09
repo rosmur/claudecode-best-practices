@@ -4,6 +4,12 @@ This is a simple repo to summarize various articles/blog posts about the best wa
 
 Given Claude Code is only a few months old now and agentic coding is still very much a nascent domain, the intent is to have this repo stay live/current. Please consider contributing/participating as detailed below.
 
+## Collation
+
+Read the collation and analysis here:
+
+rosmur.github.io/claudecode-best-practices/
+
 ## Process
 
 ### Source Acquisition
