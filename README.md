@@ -8,7 +8,7 @@ Given Claude Code is only a few months old now and agentic coding is still very 
 
 Read the collation and analysis here:
 
-rosmur.github.io/claudecode-best-practices/
+[rosmur.github.io/claudecode-best-practices/](https://rosmur.github.io/claudecode-best-practices/)
 
 ## Process
 
